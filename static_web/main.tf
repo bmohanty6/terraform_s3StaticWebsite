@@ -13,3 +13,11 @@ output "static_website_endpoint" {
   description = "static website endpoint after creation"
   value       = module.website1.website_endpoint
 }
+
+resource "aws_s3_bucket_object" "website-content"{
+  for_each  = fileset("resources/", "*")
+  bucket    = module.website1.website_bucket_name
+  key       = each.value
+  source    = "resources/${each.value}"
+  etag      = filemd5("resources/${each.value}")
+}
